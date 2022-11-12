@@ -5,7 +5,7 @@
 % input sequence
 T = 16*4096;
 time = 0:T-1;
-p_switch = 0.1; % show low/high band properties of input signal
+p_switch = 0.5; % show low/high band properties of input signal
 UU = ones(1,T);
 for t=2:T,
     if rand(1)<p_switch, UU(t)=-UU(t-1); else UU(t)=UU(t-1); end
