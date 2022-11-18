@@ -15,7 +15,7 @@ function theta = forgetting(input,output,A0,B0,n_samples,n_samplesBatch,variance
     y = output;
     u = input;
     theta = zeros(na + nb, n_samples);
-    P= eye(7,7);
+    P=sqrt(variance)*eye(7,7);
     for i = na+1:n_samples
         % Regresor construction
         z = [-y(i - 1:-1:i-na); u(i:-1:i-nb + 1)];
