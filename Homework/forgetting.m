@@ -3,7 +3,7 @@
 % Time Varying Exponential
 % Restricted
 % Use of prior information
-function theta = forgetting(input,output,A0,B0,n_samples,n_samplesBatch,variance)
+function theta = forgetting(input,output,A0,B0,n_samples,n_samplesBatch,variance,method)
     a = A0;
     b = B0;
     na = numel(a)-1;
@@ -44,34 +44,36 @@ function theta = forgetting(input,output,A0,B0,n_samples,n_samplesBatch,variance
         %       theta(t+1|t) = theta(t|t)
         %
         %   updating the covariance matrix
-        
-        %%%  No forgetting
-%              P = P;
-%         
-        %%%  Linear forgetting
-    %         V = 0.000001*eye(na + nb);
-    %         P = P + V;
-    %     
-        %%%  Exponential forgetting
-%             tef = 1500;
-%             phi=1-1/tef;
-%             P=1/phi*P;
-%         
-        %%%  Restricted linear forgetting
-            K = P*z;
-            V = 0.00000075*eye(7);
-            zeta_v = z'*V*z;
-            Vo = K*(zeta_v/zeta^2)*K';
-            P = P + Vo;
-        
-        %%%  Restricted exponential forgetting
-%             K = P*z;
-%             tef = 250;
-%             fi=1-1/tef;
-%             zeta_v = (1-fi)/fi * zeta;
-%             Vo = K*(zeta_v/zeta^2)*K';
-%             P = P + Vo;
-%         
+        switch method
+            case 'linear'
+                %%%  Linear forgetting
+                V = 0.000001*eye(na + nb);
+                P = P + V;
+
+            case 'exponential'
+                %%%  Exponential forgetting
+                tef = 1500;
+                phi=1-1/tef;
+                P=1/phi*P;
+            case 'restricted_linear'
+                %%%  Restricted linear forgetting
+                K = P*z;
+                V = 0.00000075*eye(7);
+                zeta_v = z'*V*z;
+                Vo = K*(zeta_v/zeta^2)*K';
+                P = P + Vo;
+            case 'restricted_exponential'
+                %%%  Restricted exponential forgetting
+                K = P*z;
+                tef = 250;
+                fi=1-1/tef;
+                zeta_v = (1-fi)/fi * zeta;
+                Vo = K*(zeta_v/zeta^2)*K';
+                P = P + Vo;
+            otherwise
+                %%% No forgetting
+                P = P;
+        end
         P_time_step = P;
     end
     return;
